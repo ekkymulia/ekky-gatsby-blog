@@ -81,7 +81,6 @@ const BlogTitle = styled.h3`
 `
 
 export default ({ data }) => {
-  console.log(data)
   return (
   <Layout>
     <div className={styles.textCenter}>
@@ -97,21 +96,10 @@ export default ({ data }) => {
       <h1>
         Welcome to <b>Gatsby!</b>
       </h1>
-      <p className={styles.intro}>
-        <b>Example pages:</b>{" "}
-        {samplePageLinks.map((link, i) => (
-          <React.Fragment key={link.url}>
-            <Link to={link.url}>{link.text}</Link>
-            {i !== samplePageLinks.length - 1 && <> · </>}
-          </React.Fragment>
-        ))}
-        <br />
-        Edit <code>src/pages/index.js</code> to update this page.
-      </p>
     </div>
     <div>
       <h1>Ekky's Thought</h1>
-      <h4>{ data.allMarkdownRemark.totalCount }</h4>
+      <h4>{ data.allMarkdownRemark.totalCount } Posts</h4>
       {
         data.allMarkdownRemark.edges.map(({node}) => (
           <div key={node.id}>
