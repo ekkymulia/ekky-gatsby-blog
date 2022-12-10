@@ -1,6 +1,8 @@
 import * as React from "react"
-import { Link } from "gatsby"
+import { graphql, Link } from "gatsby"
 import { StaticImage } from "gatsby-plugin-image"
+
+import styled from "styled-components"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -69,7 +71,18 @@ const moreLinks = [
 
 const utmParameters = `?utm_source=starter&utm_medium=start-page&utm_campaign=default-starter`
 
-const IndexPage = () => (
+const BlogLink = styled(Link)`
+  text-decoration: none;
+`
+
+const BlogTitle = styled.h3`
+  margin-bottom: 20px;
+  color: blue;
+`
+
+export default ({ data }) => {
+  console.log(data)
+  return (
   <Layout>
     <div className={styles.textCenter}>
       <StaticImage
@@ -96,27 +109,22 @@ const IndexPage = () => (
         Edit <code>src/pages/index.js</code> to update this page.
       </p>
     </div>
-    <ul className={styles.list}>
-      {links.map(link => (
-        <li key={link.url} className={styles.listItem}>
-          <a
-            className={styles.listItemLink}
-            href={`${link.url}${utmParameters}`}
-          >
-            {link.text} ↗
-          </a>
-          <p className={styles.listItemDescription}>{link.description}</p>
-        </li>
-      ))}
-    </ul>
-    {moreLinks.map((link, i) => (
-      <React.Fragment key={link.url}>
-        <a href={`${link.url}${utmParameters}`}>{link.text}</a>
-        {i !== moreLinks.length - 1 && <> · </>}
-      </React.Fragment>
-    ))}
+    <div>
+      <h1>Ekky's Thought</h1>
+      <h4>{ data.allMarkdownRemark.totalCount }</h4>
+      {
+        data.allMarkdownRemark.edges.map(({node}) => (
+          <div key={node.id}>
+            <BlogLink to={node.fields.slug}>
+              <BlogTitle>{node.frontmatter.title} - {node.frontmatter.date}</BlogTitle>
+              <p>{node.excerpt}</p>
+            </BlogLink>
+          </div>
+        ))
+      }
+    </div>
   </Layout>
-)
+)}
 
 /**
  * Head export to define metadata for the page
@@ -125,4 +133,24 @@ const IndexPage = () => (
  */
 export const Head = () => <Seo title="Home" />
 
-export default IndexPage
+export const query = graphql`
+  query {
+    allMarkdownRemark(sort: {fields: [frontmatter___date], order: DESC}) {
+      totalCount
+      edges {
+        node {
+          fields {
+            slug
+          }
+          id
+          frontmatter {
+            date
+            description
+            title
+          }
+          excerpt
+        }
+      }
+    }
+  }
+`
